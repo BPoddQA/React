@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import logo from './logo.png';
 import './App.css';
 import Book from './Book/Book';
 
@@ -90,7 +90,7 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome</h1>
+          <h1 className="App-title">Library</h1>
         </header>
         <table border="1" id="bookTable">
           <tr>
