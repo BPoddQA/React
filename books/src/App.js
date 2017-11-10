@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.png';
 import './App.css';
+const url = "http://localhost:3001";
 
 class App extends Component {
   state = {
@@ -8,8 +9,8 @@ class App extends Component {
   }
 
   newEntryButton = (book) => {
-    if (book) {   
-      const request = new Request("http://localhost:3001/book", {
+    if (book) {
+      const request = new Request(url + "/book", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -20,19 +21,8 @@ class App extends Component {
     }
   }
 
-  addBook = (book) => {
-    const request = new Request("http://localhost:3001/book", {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(book)
-    });
-    fetch(request).then(() => this.loadBooks());
-  }
-
   loadBooks = () => {
-    fetch("http://localhost:3001/books").then((a) => {
+    fetch(url + "/books").then((a) => {
       a.json().then((b) => this.setState({ books: b }));
 
     })
@@ -132,7 +122,7 @@ class TableComponent extends Component {
 
 class TableRow extends Component {
   deleteBook = () => {
-    const request = new Request(`http://localhost:3001/book/${this.props.id}`, {
+    const request = new Request(`${url}/book/${this.props.id}`, {
       method: "DELETE"
     });
     fetch(request).then(() => this.props.reload());

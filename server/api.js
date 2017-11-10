@@ -129,7 +129,8 @@ router.post("/book/", (req, res) => {
         res.send(postBook);
     }
     else {
-        res.sendStatus(500);
+        //res.sendStatus(500);
+        res.send("nice try scrub");
     }
 });
 
@@ -139,7 +140,7 @@ router.put("/book/:id", (req, res) => {
     if (currentBook) {
         const putBook = req.body;
         const isValid = isValidBook(putBook);
-        if (isValid) {            
+        if (isValid) {
             currentBook.title = putBook.title;
             currentBook.author = putBook.author;
             currentBook.num_pages = putBook.num_pages;
@@ -162,8 +163,8 @@ router.delete("/book/:id", (req, res) => {
 });
 
 function isValidBook(book) {
-    if (Object.keys(book).length === 5) {
-        if (book.isbn && book.title && book.author && parseInt(book.num_pages)) {
+    if (Object.keys(book).length === 5) {        
+        if ((typeof book.isbn === 'string') && (typeof book.title === 'string') && (typeof book.author === 'string') && parseInt(book.num_pages)) {
             return true;
         }
     } else {
