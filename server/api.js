@@ -6,6 +6,8 @@ const port = process.env.port || 3001;
 const router = express.Router();
 let app = express();
 
+let nextID = 12;
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
@@ -119,8 +121,10 @@ router.get("/book/:id", (req, res) => {
 });
 router.post("/book/", (req, res) => {
     const postBook = req.body;
-    const isValid = isValidBook(postBook) && !books.find((a) => a.id == postBook.id);
+    const isValid = isValidBook(postBook) && !books.find((a) => a.isbn == postBook.isbn);
     if (isValid) {
+        postBook.id = nextID;
+        nextID++;
         books.push(postBook);
         res.send(postBook);
     }
@@ -135,7 +139,7 @@ router.put("/book/:id", (req, res) => {
     if (currentBook) {
         const putBook = req.body;
         const isValid = isValidBook(putBook);
-        if (isValid) {
+        if (isValid) {            
             currentBook.title = putBook.title;
             currentBook.author = putBook.author;
             currentBook.num_pages = putBook.num_pages;
@@ -159,7 +163,7 @@ router.delete("/book/:id", (req, res) => {
 
 function isValidBook(book) {
     if (Object.keys(book).length === 5) {
-        if (parseInt(book.id) && book.isbn && book.title && book.author && parseInt(book.num_pages)) {
+        if (book.isbn && book.title && book.author && parseInt(book.num_pages)) {
             return true;
         }
     } else {

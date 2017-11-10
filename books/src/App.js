@@ -7,10 +7,28 @@ class App extends Component {
     books: []
   }
 
-  newEntryButton = () => {
-    let array = this.state.books;
-    array.push({ id: 12, isbn: "test", title: "test", author: "test", num_pages: 123 });
-    this.setState({ books: array });
+  newEntryButton = (book) => {
+    if (book) {   
+      const request = new Request("http://localhost:3001/book", {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(book)
+      });
+      fetch(request).then(() => this.loadBooks());
+    }
+  }
+
+  addBook = (book) => {
+    const request = new Request("http://localhost:3001/book", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(book)
+    });
+    fetch(request).then(() => this.loadBooks());
   }
 
   loadBooks = () => {
@@ -25,7 +43,6 @@ class App extends Component {
     this.loadBooks();
   }
 
-
   render() {
     return (
       <div className="App">
@@ -34,7 +51,7 @@ class App extends Component {
           <h1 className="App-title">Library</h1>
         </header>
         <NewEntryComponent newEntry={this.newEntryButton} />
-        <TableComponent library={this.state.books} reload={this.loadBooks}/>
+        <TableComponent library={this.state.books} reload={this.loadBooks} />
 
       </div>
     );
@@ -43,16 +60,44 @@ class App extends Component {
 
 class NewEntryComponent extends Component {
 
+  constructor(props) {
+    super(props);
 
+    this.update = (valueName) => (event) => this.setState({ [valueName]: event.target.value });
+
+    this.submit = (e) => {
+      e.preventDefault();
+      this.props.newEntry(this.state);
+      this.setState({
+        id: "",
+        isbn: "",
+        title: "",
+        author: "",
+        num_pages: ""
+      });
+    }
+
+
+    this.state = {
+
+      id: "",
+      isbn: "",
+      title: "",
+      author: "",
+      num_pages: ""
+
+    }
+
+  }
   render() {
     return (
-      <div>
-        <input id="inputTitle" type="text" placeholder="Enter a title"></input>
-        <input id="inputAuthor" type="text" placeholder="Enter an author"></input>
-        <input id="inputPages" type="Number" placeholder="Enter number of pages"></input>
-        <input id="inputIsbn" type="text" placeholder="Enter an isbn"></input>
-        <button onClick={this.props.newEntry}>Add</button>
-      </div>
+      <form id="newEntry" onSubmit={this.submit}>
+        <input name="inputTitle" type="text" value={this.state.title} onChange={this.update("title")}></input>
+        <input name="inputAuthor" type="text" value={this.state.author} onChange={this.update("author")}></input>
+        <input name="inputPages" type="text" value={this.state.num_pages} onChange={this.update("num_pages")}></input>
+        <input name="inputIsbn" type="text" value={this.state.isbn} onChange={this.update("isbn")}></input>
+        <button >Add</button>
+      </form>
     )
   }
 }
@@ -76,8 +121,8 @@ class TableComponent extends Component {
               title={book.title}
               author={book.author}
               num_pages={book.num_pages}
-              isbn={book.isbn} 
-              reload={this.props.reload}/>
+              isbn={book.isbn}
+              reload={this.props.reload} />
           })}
         </tbody>
       </table >
@@ -91,9 +136,6 @@ class TableRow extends Component {
       method: "DELETE"
     });
     fetch(request).then(() => this.props.reload());
-
-    
-    
   }
 
   render() {
